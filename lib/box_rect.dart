@@ -10,18 +10,22 @@ class BoxRect {
   Rect rect;
   Paint paint;
   bool tapped = false;
-  int directionSpeed = 5;
+  Offset targetLocation;
+  double get speed => game.tileSize * 5;
 
   BoxRect(this.game) {
     rect = Rect.fromLTWH(
-      game.tileSize * 4,
-      game.tileSize * 6,
-      game.tileSize / 2,
-      game.tileSize / 2,
+      0,
+      0,
+      game.tileSize * 0.75,
+      game.tileSize * 0.75,
     );
     paint = Paint();
-
-    paint.color = Color.fromRGBO(50, 50, 50, 1);
+    paint.color = Color.fromRGBO(60, 70, 80, 1);
+    setTargetLocation(
+      game.playRect.width - rect.width,
+      0,
+    );
   }
 
   void render(Canvas canvas) {
@@ -33,16 +37,51 @@ class BoxRect {
         ? Color.fromRGBO(255, 255, 160, 1)
         : Color.fromRGBO(50, 50, 50, 1);
 
+    // if (tapped) {
+    //   if (rect.bottom >= game.playRect.height || rect.top <= 0) {
+    //     rect = rect.translate(0, game.tileSize * t * speed);
+    //   } else {
+    //     rect = rect.translate(0, game.tileSize * t * speed);
+    //     tapped = true;
+    //   }
+    // }
+    //
+    //
     if (tapped) {
-      if (rect.bottom >= game.playRect.height || rect.top <= 0) {
-        // tapped = false;
-        directionSpeed *= -1;
-        rect = rect.translate(0, game.tileSize * t * directionSpeed);
-      } else {
-        rect = rect.translate(0, game.tileSize * t * directionSpeed);
-        tapped = true;
+      print(rect.topLeft);
+      double stepDistance = speed * t;
+      Offset toTarget = targetLocation - Offset(rect.left, rect.top);
+
+      if (stepDistance < toTarget.distance) {
+        Offset stepToTarget = Offset.fromDirection(
+          toTarget.direction,
+          stepDistance,
+        );
+        rect = rect.shift(stepToTarget);
+      }
+      if (rect.top >= game.playRect.top) {
+        setTargetLocation(
+          game.playRect.width,
+          game.playRect.top,
+        );
+      }
+      if (rect.left >= game.playRect.width - rect.width) {
+        setTargetLocation(
+          game.playRect.width - rect.width,
+          game.playRect.height - rect.height,
+        );
+      }
+      if (rect.bottom > game.playRect.height) {
+        setTargetLocation(
+          0,
+          game.playRect.height,
+        );
       }
     }
+  }
+
+  void setTargetLocation(double x, double y) {
+    targetLocation = Offset(x, y);
   }
 
   void onTapDown(TapDownDetails details) {

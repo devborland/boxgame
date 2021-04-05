@@ -9,7 +9,6 @@ import 'control_rect.dart';
 class BoxGame extends Game with TapDetector {
   Size screenSize;
   double tileSize;
-  bool hasWon = false;
   Rect playRect;
   BoxRect boxRect;
   ControlRect controlRect;
@@ -20,6 +19,12 @@ class BoxGame extends Game with TapDetector {
 
   void initialize() async {
     resize(await Flame.util.initialDimensions());
+    playRect = Rect.fromLTWH(
+      0,
+      0,
+      screenSize.width - 0,
+      screenSize.height * 0.7,
+    );
     boxRect = BoxRect(this);
     controlRect = ControlRect(this);
   }
@@ -33,12 +38,6 @@ class BoxGame extends Game with TapDetector {
 
   @override
   void render(Canvas canvas) {
-    playRect = Rect.fromLTWH(
-      0,
-      0,
-      screenSize.width - 0,
-      screenSize.height * 0.7,
-    );
     Paint bgPaint = Paint();
     bgPaint.color = Color.fromRGBO(110, 120, 80, 1);
     canvas.drawRect(playRect, bgPaint);

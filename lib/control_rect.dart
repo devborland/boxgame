@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flutter/gestures.dart';
+import 'package:flame/gestures.dart';
 
 import 'box_game.dart';
 
