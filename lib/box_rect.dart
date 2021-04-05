@@ -22,61 +22,24 @@ class BoxRect {
     );
     paint = Paint();
     paint.color = Color.fromRGBO(60, 70, 80, 1);
-    setTargetLocation(
-      game.playRect.width - rect.width,
-      0,
-    );
   }
 
   void render(Canvas canvas) {
     canvas.drawRect(rect, paint);
   }
 
-  void update(double t) {
+  void update(double t) async {
     paint.color = tapped
         ? Color.fromRGBO(255, 255, 160, 1)
         : Color.fromRGBO(50, 50, 50, 1);
 
-    // if (tapped) {
-    //   if (rect.bottom >= game.playRect.height || rect.top <= 0) {
-    //     rect = rect.translate(0, game.tileSize * t * speed);
-    //   } else {
-    //     rect = rect.translate(0, game.tileSize * t * speed);
-    //     tapped = true;
-    //   }
-    // }
-    //
-    //
     if (tapped) {
-      print(rect.topLeft);
-      double stepDistance = speed * t;
-      Offset toTarget = targetLocation - Offset(rect.left, rect.top);
-
-      if (stepDistance < toTarget.distance) {
-        Offset stepToTarget = Offset.fromDirection(
-          toTarget.direction,
-          stepDistance,
-        );
-        rect = rect.shift(stepToTarget);
+      print(rect.right);
+      moveRight(game.playRect.width - rect.width, t);
+      if (rect.right >= game.playRect.width - 1) {
+        tapped = false;
       }
-      if (rect.top >= game.playRect.top) {
-        setTargetLocation(
-          game.playRect.width,
-          game.playRect.top,
-        );
-      }
-      if (rect.left >= game.playRect.width - rect.width) {
-        setTargetLocation(
-          game.playRect.width - rect.width,
-          game.playRect.height - rect.height,
-        );
-      }
-      if (rect.bottom > game.playRect.height) {
-        setTargetLocation(
-          0,
-          game.playRect.height,
-        );
-      }
+      if (tapped) {}
     }
   }
 
@@ -89,5 +52,33 @@ class BoxRect {
       tapped = true;
     } else
       tapped = false;
+  }
+
+  void moveRight(double x, double t) {
+    setTargetLocation(x, rect.top);
+    double stepDistance = speed * t;
+    Offset toTarget = targetLocation - Offset(rect.left, rect.top);
+
+    if (stepDistance < toTarget.distance) {
+      Offset stepToTarget = Offset.fromDirection(
+        toTarget.direction,
+        stepDistance,
+      );
+      rect = rect.shift(stepToTarget);
+    }
+  }
+
+  void moveDown(double t) {
+    setTargetLocation(game.playRect.width - rect.width, game.playRect.height);
+    double stepDistance = speed * t;
+    Offset toTarget = targetLocation - Offset(rect.left, rect.top);
+
+    if (stepDistance < toTarget.distance) {
+      Offset stepToTarget = Offset.fromDirection(
+        toTarget.direction,
+        stepDistance,
+      );
+      rect = rect.shift(stepToTarget);
+    }
   }
 }
